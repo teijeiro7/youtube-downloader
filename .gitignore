@@ -56,6 +56,10 @@ Thumbs.db
 # Build outputs
 build/
 dist/
+frontend/build/
 
 # React
 .eslintcache
+
+# Vercel
+.vercel

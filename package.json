@@ -1,4 +1,20 @@
 {
+  "name": "youtube-downloader",
+  "version": "1.0.0",
+  "description": "YouTube downloader with FastAPI backend and React frontend",
+  "main": "main.py",
+  "scripts": {
+    "build": "cd frontend && npm install && npm run build",
+    "start": "cd frontend && npm start",
+    "dev": "cd frontend && npm start",
+    "install-frontend": "cd frontend && npm install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/teijeiro7/youtube-downloader.git"
+  },
+  "author": "teijeiro7",
+  "license": "MIT",
   "dependencies": {
     "lucide-react": "^0.525.0"
   },
