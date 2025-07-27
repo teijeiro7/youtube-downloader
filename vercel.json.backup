@@ -4,7 +4,6 @@
   "outputDirectory": "frontend/build",
   "installCommand": "cd frontend && npm install",
   "framework": "create-react-app",
-  "functions": {},
   "routes": [
     {
       "src": "/static/(.*)",
