@@ -1,5 +1,5 @@
 # main.py
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
@@ -19,19 +19,25 @@ from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
 
 app = FastAPI(title="YouTube Downloader API", version="1.0.0")
 
+# Middleware para logging de CORS
+@app.middleware("http")
+async def cors_logging_middleware(request: Request, call_next):
+    origin = request.headers.get("origin")
+    print(f"Request from origin: {origin}")
+    print(f"Request method: {request.method}")
+    print(f"Request URL: {request.url}")
+    
+    response = await call_next(request)
+    
+    print(f"Response headers: {response.headers}")
+    return response
+
 # Configurar CORS para permitir requests desde el frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000", 
-        "http://127.0.0.1:3000",
-        "http://localhost:3001", 
-        "http://127.0.0.1:3001",
-        "https://*.vercel.app",
-        "https://vercel.app"
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
+    allow_origins=["*"],  # Permitir todos los orígenes temporalmente para debugging
+    allow_credentials=False,  # Cambiar a False cuando allow_origins es "*"
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -260,6 +266,15 @@ async def download_video(url: str, format: str, quality: str, output_path: str) 
 @app.get("/")
 async def root():
     return {"message": "YouTube Downloader API funcionando correctamente"}
+
+@app.get("/cors-test")
+async def cors_test():
+    """Endpoint para probar CORS"""
+    return {
+        "message": "CORS funcionando correctamente",
+        "timestamp": "2025-07-28",
+        "status": "success"
+    }
 
 @app.get("/qualities")
 async def get_available_qualities():
