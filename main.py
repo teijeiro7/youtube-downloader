@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
@@ -28,10 +28,14 @@ app.add_middleware(
         "http://127.0.0.1:3001",
         "https://*.vercel.app",
         "https://vercel.app",
-        "https://*.onrender.com"
+        "https://*.onrender.com",
+        "https://youtube-downloader-vercel.app",
+        "https://youtube-downloader-a-mer-two.vercel.app",
+        "https://rieljefe-youtube-downloader.vercel.app",
+        "*"  # Temporal para debugging - remover en producción
     ],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -215,6 +219,20 @@ async def download_video(url: str, format: str, quality: str, output_path: str) 
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=400, detail=f"Error al descargar: {str(e)}")
+
+# Manejar solicitudes OPTIONS para CORS
+@app.options("/{path:path}")
+async def options_handler(request: Request, path: str):
+    """Maneja las solicitudes OPTIONS para CORS preflight"""
+    return Response(
+        status_code=200,
+        headers={
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Max-Age": "86400"
+        }
+    )
 
 @app.get("/")
 async def root():

@@ -58,10 +58,15 @@ export default function YouTubeDownloader() {
 
     try {
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+      console.log('API URL:', apiUrl); // Para debugging
+      
       const response = await fetch(`${apiUrl}/download`, {
         method: 'POST',
+        mode: 'cors',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/octet-stream',
+          'Access-Control-Allow-Origin': '*',
         },
         body: JSON.stringify({
           url: url,
@@ -71,7 +76,8 @@ export default function YouTubeDownloader() {
       });
 
       if (!response.ok) {
-        throw new Error('Error en el servidor');
+        const errorText = await response.text();
+        throw new Error(`Error en el servidor: ${response.status} - ${errorText}`);
       }
 
       const blob = await response.blob();
